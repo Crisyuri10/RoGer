@@ -45,6 +45,14 @@ profissoes = [
     "Motorista", "Técnico", "Cozinheiro", "Vendedor", "Atendente"
 ]
 
+# --- Função para reproduzir som ---
+def tocar_som(url_som):
+    st.markdown(f"""
+        <audio autoplay>
+        <source src="{url_som}" type="audio/mpeg">
+        </audio>
+        """, unsafe_allow_html=True)
+
 # --- Formulário para adicionar novos dados ---
 st.title("📊 APRENDENDO A CONECTAR GOOGLE SHEETS COM STREAMLIT")
 st.subheader("📥 Adicionar novos dados")
@@ -60,6 +68,9 @@ with st.form(key="form_adicionar"):
         if nome and profissao:
             aba.append_table(values=[nome, idade, profissao], start='A1', end=None, dimension='ROWS', overwrite=False)
             st.success("✅ Dados enviados com sucesso!")
+            
+            # Tocar som de confirmação (você pode trocar a URL)
+            tocar_som("https://www.soundjay.com/button/beep-07.mp3")
         else:
             st.error("❌ Preencha todos os campos obrigatórios!")
 
