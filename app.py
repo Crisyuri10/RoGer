@@ -8,8 +8,8 @@ st.set_page_config(page_title="Google Sheets + Streamlit",
                    page_icon="📊", layout="wide")
 
 # --- Autenticação via secrets ---
-creds = st.secrets["gcp_service_account"]  # pega o bloco do secrets
-creds_json = json.dumps(dict(creds))        # transforma dict em string JSON
+creds = st.secrets["gcp_service_account"]
+creds_json = json.dumps(dict(creds))
 client = pygsheets.authorize(service_account_json=creds_json)
 
 # --- Conectar à planilha ---
@@ -36,7 +36,14 @@ def carregar_dados():
     if len(data) > 1:
         return pd.DataFrame(data[1:], columns=rename_duplicates(data[0]))
     else:
-        return pd.DataFrame(columns=["Coluna1", "Coluna2", "Coluna3"])
+        return pd.DataFrame(columns=["Nome", "Idade", "Profissão"])
+
+# --- Lista de profissões ---
+profissoes = [
+    "Engenheiro", "Médico", "Professor", "Advogado", "Enfermeiro",
+    "Analista de Sistemas", "Designer", "Arquiteto", "Contador",
+    "Motorista", "Técnico", "Cozinheiro", "Vendedor", "Atendente"
+]
 
 # --- Formulário para adicionar novos dados ---
 st.title("📊 APRENDENDO A CONECTAR GOOGLE SHEETS COM STREAMLIT")
@@ -45,18 +52,18 @@ st.subheader("📥 Adicionar novos dados")
 with st.form(key="form_adicionar"):
     nome = st.text_input("Nome")
     idade = st.number_input("Idade", min_value=0, max_value=120, step=1)
-    departamento = st.text_input("Departamento")
+    profissao = st.selectbox("Profissão", options=profissoes)
     
     submit_button = st.form_submit_button(label="Enviar")
 
     if submit_button:
-        if nome and departamento:  # validação simples
-            aba.append_table(values=[nome, idade, departamento], start='A1', end=None, dimension='ROWS', overwrite=False)
+        if nome and profissao:
+            aba.append_table(values=[nome, idade, profissao], start='A1', end=None, dimension='ROWS', overwrite=False)
             st.success("✅ Dados enviados com sucesso!")
         else:
             st.error("❌ Preencha todos os campos obrigatórios!")
 
-# --- Exibir dados existentes (sempre atualizados) ---
+# --- Exibir dados existentes ---
 st.subheader("📋 Dados existentes no Google Sheets")
 df = carregar_dados()
 st.dataframe(df, use_container_width=True)
