@@ -50,4 +50,13 @@ with st.form(key="form_adicionar"):
     submit_button = st.form_submit_button(label="Enviar")
 
     if submit_button:
-        if nome and departamento:  # validaç
+        if nome and departamento:  # validação simples
+            aba.append_table(values=[nome, idade, departamento], start='A1', end=None, dimension='ROWS', overwrite=False)
+            st.success("✅ Dados enviados com sucesso!")
+        else:
+            st.error("❌ Preencha todos os campos obrigatórios!")
+
+# --- Exibir dados existentes (sempre atualizados) ---
+st.subheader("📋 Dados existentes no Google Sheets")
+df = carregar_dados()
+st.dataframe(df, use_container_width=True)
